@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>设置 - 悬浮播放器</title>
+    <link rel="stylesheet" href="./settings.css" />
+  </head>
+  <body>
+    <div class="titlebar">
+      <span class="title-text">设置</span>
+      <div class="win-controls">
+        <button id="win-min" class="win-btn" title="最小化" type="button">
+          <svg width="11" height="11" viewBox="0 0 11 11"><rect x="1" y="5" width="9" height="1" /></svg>
+        </button>
+        <button id="win-close" class="win-btn close" title="关闭" type="button">
+          <svg width="11" height="11" viewBox="0 0 11 11">
+            <path d="M1 1 L10 10 M10 1 L1 10" stroke-width="1.2" fill="none" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <main class="content">
+      <p class="subtitle">调整悬浮窗的外观与行为，改动即时生效</p>
+
+      <!-- 外观 -->
+    <section class="card">
+      <div class="card-head">
+        <span class="card-icon">🎨</span>
+        <h2>主题</h2>
+      </div>
+      <div class="field">
+        <div class="field-text">
+          <span class="field-label">界面外观</span>
+          <span class="field-desc">夜间更护眼，跟随系统会自动切换</span>
+        </div>
+        <div class="segmented" id="theme-seg">
+          <button type="button" class="seg" data-theme-val="light">明亮</button>
+          <button type="button" class="seg" data-theme-val="dark">夜间</button>
+          <button type="button" class="seg" data-theme-val="system">跟随系统</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 显示 -->
+    <section class="card">
+      <div class="card-head">
+        <span class="card-icon">🪟</span>
+        <h2>显示</h2>
+      </div>
+      <div class="field">
+        <div class="field-text">
+          <span class="field-label">不透明度</span>
+          <span class="field-desc">越低越透明，方便叠在工作内容上</span>
+        </div>
+        <div class="range-wrap">
+          <input id="opacity" type="range" min="20" max="100" step="1" />
+          <span id="opacity-val" class="badge">90%</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 音频 -->
+    <section class="card">
+      <div class="card-head">
+        <span class="card-icon">🔊</span>
+        <h2>音频</h2>
+      </div>
+      <div class="field">
+        <div class="field-text">
+          <span class="field-label">静音</span>
+        </div>
+        <label class="switch">
+          <input id="muted" type="checkbox" />
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="field">
+        <div class="field-text">
+          <span class="field-label">音量</span>
+        </div>
+        <div class="range-wrap">
+          <input id="volume" type="range" min="0" max="100" step="1" />
+        </div>
+      </div>
+    </section>
+
+    <!-- 鼠标移动隐藏 -->
+    <section class="card">
+      <div class="card-head">
+        <span class="card-icon">🖱️</span>
+        <h2>鼠标移动时隐藏</h2>
+      </div>
+      <p class="card-hint">鼠标活动时让画面让位，停下来时再显示。</p>
+      <div class="field">
+        <div class="field-text">
+          <span class="field-label">开启此功能</span>
+        </div>
+        <label class="switch">
+          <input id="mh-enabled" type="checkbox" />
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="field">
+        <div class="field-text">
+          <span class="field-label">隐藏方式</span>
+        </div>
+        <select id="mh-mode">
+          <option value="fadeGlobal">移动时淡出 · 停下淡入（推荐）</option>
+          <option value="instant">移动即隐 · 停下即显</option>
+          <option value="proximity">仅鼠标靠近窗口时隐藏</option>
+        </select>
+      </div>
+      <div class="field">
+        <div class="field-text">
+          <span class="field-label">停多久后显示</span>
+          <span class="field-desc">单位毫秒，越大越"迟钝"</span>
+        </div>
+        <input id="mh-delay" class="num" type="number" min="0" max="10000" step="100" />
+      </div>
+      <div class="field">
+        <div class="field-text">
+          <span class="field-label">移动灵敏度</span>
+          <span class="field-desc">触发隐藏的最小移动像素</span>
+        </div>
+        <input id="mh-threshold" class="num" type="number" min="1" max="50" step="1" />
+      </div>
+      <div class="field">
+        <div class="field-text">
+          <span class="field-label">隐藏时继续播放</span>
+        </div>
+        <label class="switch">
+          <input id="mh-keep" type="checkbox" />
+          <span class="slider"></span>
+        </label>
+      </div>
+    </section>
+
+    <!-- 登录 -->
+    <section class="card">
+      <div class="card-head">
+        <span class="card-icon">🔑</span>
+        <h2>登录</h2>
+      </div>
+      <p class="card-hint">
+        需要登录的网站：先在悬浮窗输入该网址播放，再点工具栏的「登录」按钮，会弹出一个正常大小的浏览器窗口，
+        像平时一样登录后关闭它即可——登录态会被记住，播放器自动以登录状态重新加载。
+      </p>
+    </section>
+
+    <!-- 快捷键 -->
+    <section class="card">
+      <div class="card-head">
+        <span class="card-icon">⌨️</span>
+        <h2>全局快捷键</h2>
+      </div>
+      <p class="card-hint">格式如 <code>Control+Alt+H</code>，在任何程序中按下都生效。</p>
+      <div class="field">
+        <div class="field-text"><span class="field-label">隐藏 / 显示</span></div>
+        <input id="sc-visible" class="key" type="text" spellcheck="false" />
+      </div>
+      <div class="field">
+        <div class="field-text"><span class="field-label">切换可操作 / 穿透</span></div>
+        <input id="sc-interactive" class="key" type="text" spellcheck="false" />
+      </div>
+      <div class="field">
+        <div class="field-text"><span class="field-label">静音切换</span></div>
+        <input id="sc-mute" class="key" type="text" spellcheck="false" />
+      </div>
+      </section>
+    </main>
+
+    <script type="module" src="./settings.ts"></script>
+  </body>
+</html>

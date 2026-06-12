@@ -1,0 +1,62 @@
+{
+  "name": "floating-stream-player",
+  "version": "0.1.0",
+  "description": "Windows 桌面悬浮视频/直播播放器：透明置顶、跨应用悬浮、纯视频提取、鼠标自动隐藏。A floating always-on-top desktop video/live player for Windows.",
+  "main": "./out/main/index.js",
+  "author": "HuXing",
+  "license": "MIT",
+  "homepage": "https://github.com/HUXING8/floating-stream-player#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HUXING8/floating-stream-player.git"
+  },
+  "bugs": {
+    "url": "https://github.com/HUXING8/floating-stream-player/issues"
+  },
+  "keywords": [
+    "electron",
+    "video-player",
+    "floating-window",
+    "always-on-top",
+    "picture-in-picture",
+    "live-stream",
+    "overlay",
+    "windows",
+    "hls",
+    "desktop-app"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "bin": {
+    "floating-stream-player": "bin/floating-stream-player.js"
+  },
+  "files": [
+    "out",
+    "bin",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "dev": "electron-vite dev",
+    "build": "electron-vite build",
+    "preview": "electron-vite preview",
+    "start": "electron .",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "dist": "electron-vite build && electron-builder --win",
+    "prepare": "electron-vite build"
+  },
+  "dependencies": {
+    "electron": "^33.2.0",
+    "electron-store": "^8.2.0",
+    "hls.js": "^1.5.17",
+    "mpegts.js": "^1.7.3"
+  },
+  "devDependencies": {
+    "@types/node": "^22.9.0",
+    "electron-builder": "^25.1.8",
+    "electron-vite": "^2.3.0",
+    "typescript": "^5.6.3",
+    "vite": "^5.4.11"
+  }
+}

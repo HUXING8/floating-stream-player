@@ -1,0 +1,12 @@
+node_modules/
+out/
+release/
+dist/
+*.log
+.DS_Store
+
+# 开发环境 / 任务管理内部文件，不纳入公开仓库
+.trellis/
+.claude/
+.cursor/
+AGENTS.md
