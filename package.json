@@ -47,13 +47,13 @@
     "prepare": "electron-vite build"
   },
   "dependencies": {
-    "electron": "^33.2.0",
     "electron-store": "^8.2.0",
     "hls.js": "^1.5.17",
     "mpegts.js": "^1.7.3"
   },
   "devDependencies": {
     "@types/node": "^22.9.0",
+    "electron": "^33.2.0",
     "electron-builder": "^25.1.8",
     "electron-vite": "^2.3.0",
     "typescript": "^5.6.3",
