@@ -1,5 +1,7 @@
 # Floating Stream Player · 悬浮播放器
 
+[English](./README.en.md) · **中文**
+
 [![CI](https://github.com/HUXING8/floating-stream-player/actions/workflows/ci.yml/badge.svg)](https://github.com/HUXING8/floating-stream-player/actions/workflows/ci.yml)
 [![Release](https://img.shields.io/github/v/release/HUXING8/floating-stream-player?include_prereleases&sort=semver)](https://github.com/HUXING8/floating-stream-player/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
