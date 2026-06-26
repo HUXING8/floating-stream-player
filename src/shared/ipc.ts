@@ -10,8 +10,7 @@ export const IPC = {
   visibilitySet: 'visibility:set',
   // 窗口控制
   windowSetInteractive: 'window:set-interactive',
-  winCollapse: 'window:collapse',
-  winExpand: 'window:expand',
+  playerMinimize: 'window:minimize',
   openSettings: 'window:open-settings',
   quitApp: 'app:quit',
   // 播放状态（player -> main/settings）
@@ -23,7 +22,11 @@ export const IPC = {
   loginDone: 'login:done',
   // 无边框窗口控制（settings -> main）
   winMinimize: 'win:minimize',
-  winClose: 'win:close'
+  winClose: 'win:close',
+  // 渲染进程日志转发（renderer -> main）：让 webview/player 的 console 也能出现在 `npm run dev` 终端
+  logFromRenderer: 'log-from-renderer',
+  // 临时窗口不透明度（鼠标隐藏期间用，不持久化，不写 settings）
+  setWindowOpacity: 'window:set-opacity-ephemeral'
 } as const
 
 // webview 宿主 <-> guest(preload) 之间的消息通道（非主进程 IPC）
@@ -65,9 +68,12 @@ export interface PlayerApi {
   openSettings(): void
   openLogin(url: string): void
   onLoginDone(cb: () => void): () => void
-  collapse(): void
-  expand(): void
+  minimize(): void
   quit(): void
+  /** 把渲染进程/webview 的日志转发到主进程终端（仅诊断用） */
+  log(...args: unknown[]): void
+  /** 临时调整窗口不透明度（鼠标隐藏期间使用，不持久化） */
+  setWindowOpacity(opacity: number): void
 }
 
 // preload 暴露给 settings 渲染进程的 API 形状

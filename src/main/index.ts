@@ -37,7 +37,6 @@ function applySettings(settings: Settings): void {
 // 防抖持久化窗口范围，避免拖拽过程中频繁写盘与重绑
 let boundsTimer: NodeJS.Timeout | null = null
 function persistBounds(b: Rectangle): void {
-  if (windows.isCollapsed()) return // 折叠态的小尺寸不写回
   if (boundsTimer) clearTimeout(boundsTimer)
   boundsTimer = setTimeout(() => {
     store.patch({ window: { x: b.x, y: b.y, width: b.width, height: b.height } })
@@ -50,9 +49,8 @@ function registerIpc(): void {
   ipcMain.on(IPC.windowSetInteractive, (_e, interactive: boolean) =>
     windows.setInteractive(interactive)
   )
-  ipcMain.on(IPC.winCollapse, () => windows.collapse())
-  ipcMain.on(IPC.winExpand, () => windows.expand())
-  ipcMain.on(IPC.openSettings, () => windows.openSettings())
+  ipcMain.on(IPC.playerMinimize, () => windows.minimize())
+  ipcMain.on(IPC.openSettings, () => windows.openSettings(store.get().language))
   ipcMain.on(IPC.quitApp, () => app.quit())
   ipcMain.on(IPC.playerSourceStatus, (_e, payload: SourceStatusPayload) => {
     if (payload.status === 'error') console.warn('[player] 来源错误:', payload.message)
@@ -62,6 +60,14 @@ function registerIpc(): void {
   })
   ipcMain.on(IPC.winMinimize, (e) => BrowserWindow.fromWebContents(e.sender)?.minimize())
   ipcMain.on(IPC.winClose, (e) => BrowserWindow.fromWebContents(e.sender)?.close())
+  // 渲染进程日志转发：让 webview/player 内部的 console 也能出现在 `npm run dev` 终端
+  ipcMain.on(IPC.logFromRenderer, (_e, ...args: unknown[]) => {
+    console.log('[renderer]', ...args)
+  })
+  // 临时调整窗口不透明度（鼠标隐藏期间用，不写 settings；放开时由渲染层恢复到 settings.opacity）
+  ipcMain.on(IPC.setWindowOpacity, (_e, opacity: number) => {
+    windows.setOpacity(opacity)
+  })
 }
 
 function bootstrap(): void {

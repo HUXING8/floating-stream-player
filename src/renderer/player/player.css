@@ -9,9 +9,9 @@ body {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  background: transparent;
+  background: linear-gradient(135deg, #1a1f2e, #2a3545);
   font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
-  color: #fff;
+  color: #e8e8e8;
   user-select: none;
 }
 
@@ -54,12 +54,12 @@ body {
   align-items: center;
   justify-content: center;
   font-size: 13px;
-  color: #ddd;
-  background: rgba(0, 0, 0, 0.5);
+  color: #e8e8e8;
+  background: rgba(0, 0, 0, 0.7);
   pointer-events: none;
 }
 
-/* 工具栏：常驻顶部的圆角磨砂条 */
+/* 工具栏：常驻顶部的圆角磨砂条 - Dark glass styling */
 #toolbar {
   position: absolute;
   top: 8px;
@@ -71,15 +71,39 @@ body {
   gap: 7px;
   height: 40px;
   padding: 0 8px;
-  border-radius: 12px;
-  background: rgba(28, 30, 38, 0.82);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
-  backdrop-filter: blur(12px);
+  border-radius: 20px;
+  background: rgba(25, 35, 45, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3), 0 8px 48px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(40px);
 }
 
-body.collapsed #root {
-  display: none;
+/* Top shimmer effect */
+#toolbar::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: 15%;
+  width: 70%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+  border-radius: 50%;
+  filter: blur(1px);
+  pointer-events: none;
+}
+
+/* Gradient border overlay */
+#toolbar::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, transparent 50%, rgba(255, 255, 255, 0.04) 100%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
 }
 
 .drag {
@@ -88,7 +112,7 @@ body.collapsed #root {
   align-items: center;
   padding: 0 4px;
   font-size: 14px;
-  color: #9aa0ad;
+  color: #b0b0b0;
   cursor: move;
   user-select: none;
 }
@@ -105,7 +129,7 @@ body.collapsed #root {
   align-items: center;
   gap: 4px;
   font-size: 12px;
-  color: #d8dae0;
+  color: #e0e0e0;
   white-space: nowrap;
   cursor: pointer;
   user-select: none;
@@ -113,27 +137,8 @@ body.collapsed #root {
 .chk input {
   width: 14px;
   height: 14px;
-  accent-color: #5b86ff;
+  accent-color: #4a9eff;
   cursor: pointer;
-}
-
-/* 折叠角标 */
-#collapsed-icon {
-  display: none;
-  position: fixed;
-  inset: 0;
-  align-items: center;
-  justify-content: center;
-  font-size: 22px;
-  color: #fff;
-  background: #2b6cff;
-  border-radius: 14px;
-  cursor: pointer;
-  -webkit-app-region: drag;
-  user-select: none;
-}
-body.collapsed #collapsed-icon {
-  display: flex;
 }
 
 #url {
@@ -143,17 +148,18 @@ body.collapsed #collapsed-icon {
   padding: 0 12px;
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 8px;
-  background: rgba(0, 0, 0, 0.35);
-  color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+  color: #e8e8e8;
   font-size: 12.5px;
   outline: none;
-  transition: border-color 0.15s ease;
+  transition: border-color 0.15s ease, background 0.15s ease;
 }
 #url::placeholder {
-  color: #7d828d;
+  color: #999;
 }
 #url:focus {
-  border-color: #5b86ff;
+  border-color: #4a9eff;
+  background: rgba(255, 255, 255, 0.12);
 }
 
 #toolbar button {
@@ -162,25 +168,26 @@ body.collapsed #collapsed-icon {
   padding: 0 12px;
   border: none;
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.1);
-  color: #f2f3f5;
+  background: rgba(255, 255, 255, 0.08);
+  color: #e8e8e8;
   font-size: 12.5px;
   cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   transition:
     background 0.15s ease,
     color 0.15s ease;
 }
 #toolbar button:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.15);
 }
 
 #play {
-  background: #5b86ff;
+  background: #4a9eff;
   color: #fff;
   font-weight: 500;
 }
 #play:hover {
-  background: #6f95ff;
+  background: #5ba3ff;
 }
 
 #close-btn {
@@ -190,4 +197,125 @@ body.collapsed #collapsed-icon {
 #close-btn:hover {
   background: #e5484d;
   color: #fff;
+}
+
+/* 音量与透明度控制组 - YouTube style horizontal expanding slider */
+.control-group {
+  display: inline-flex;
+  align-items: center;
+  overflow: hidden;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  transition: background 0.15s ease;
+  -webkit-app-region: no-drag;
+}
+
+.control-group:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  min-width: 28px;
+  flex-shrink: 0;
+  padding: 0;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: #e8e8e8;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+  -webkit-app-region: no-drag;
+}
+
+.icon-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.icon-btn .icon {
+  font-size: 14px;
+  line-height: 1;
+}
+
+/* Horizontal slider - collapses to width 0 by default, expands on group hover */
+.horizontal-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 0;
+  height: 4px;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.2);
+  outline: none;
+  cursor: pointer;
+  opacity: 0;
+  transition:
+    width 0.2s ease,
+    opacity 0.2s ease,
+    margin 0.2s ease;
+  -webkit-app-region: no-drag;
+}
+
+/* Expand slider when hovering over the control group */
+.control-group:hover .horizontal-slider {
+  width: 80px;
+  opacity: 1;
+  margin-left: 8px;
+  margin-right: 8px;
+}
+
+/* Webkit slider thumb */
+.horizontal-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #4a9eff;
+  cursor: pointer;
+  transition: background 0.15s ease;
+  margin-top: -4px; /* Center 12px thumb on 4px track */
+}
+
+.horizontal-slider::-webkit-slider-thumb:hover {
+  background: #5ba3ff;
+}
+
+/* Webkit slider track */
+.horizontal-slider::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Firefox slider thumb */
+.horizontal-slider::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  border: none;
+  border-radius: 50%;
+  background: #4a9eff;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.horizontal-slider::-moz-range-thumb:hover {
+  background: #5ba3ff;
+}
+
+/* Firefox slider track */
+.horizontal-slider::-moz-range-track {
+  width: 100%;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.2);
 }

@@ -3,6 +3,7 @@
 
 export type MouseHideMode = 'fadeGlobal' | 'instant' | 'proximity'
 export type ThemeMode = 'light' | 'dark' | 'system'
+export type Language = 'zh' | 'en'
 
 export interface WindowBounds {
   x: number | null
@@ -14,6 +15,8 @@ export interface WindowBounds {
 export interface Settings {
   /** 界面主题：明亮 / 夜间 / 跟随系统 */
   theme: ThemeMode
+  /** 界面语言：中文 / 英文 */
+  language: Language
   /** 上次播放的 URL */
   lastUrl: string
   /** 悬浮窗位置与大小（x/y 为 null 时居中） */
@@ -50,6 +53,7 @@ export const OPACITY_MAX = 1.0
 
 export const DEFAULT_SETTINGS: Settings = {
   theme: 'system',
+  language: 'zh',
   lastUrl: '',
   window: { x: null, y: null, width: 480, height: 270 },
   opacity: 0.9,
@@ -78,6 +82,7 @@ export function clampOpacity(value: number): number {
 export function mergeSettings(base: Settings, patch: DeepPartial<Settings>): Settings {
   return {
     theme: patch.theme ?? base.theme,
+    language: patch.language ?? base.language,
     lastUrl: patch.lastUrl ?? base.lastUrl,
     window: { ...base.window, ...patch.window },
     opacity: patch.opacity != null ? clampOpacity(patch.opacity) : base.opacity,

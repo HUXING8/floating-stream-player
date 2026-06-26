@@ -24,9 +24,10 @@ const api: PlayerApi = {
   openSettings: () => ipcRenderer.send(IPC.openSettings),
   openLogin: (url: string) => ipcRenderer.send(IPC.openLogin, url),
   onLoginDone: (cb) => sub(IPC.loginDone, () => cb()),
-  collapse: () => ipcRenderer.send(IPC.winCollapse),
-  expand: () => ipcRenderer.send(IPC.winExpand),
-  quit: () => ipcRenderer.send(IPC.quitApp)
+  minimize: () => ipcRenderer.send(IPC.playerMinimize),
+  quit: () => ipcRenderer.send(IPC.quitApp),
+  log: (...args: unknown[]) => ipcRenderer.send(IPC.logFromRenderer, ...args),
+  setWindowOpacity: (opacity: number) => ipcRenderer.send(IPC.setWindowOpacity, opacity)
 }
 
 contextBridge.exposeInMainWorld('playerApi', api)

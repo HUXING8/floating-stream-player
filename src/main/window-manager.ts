@@ -1,8 +1,7 @@
 import { join } from 'node:path'
 import { BrowserWindow, nativeTheme, type Rectangle } from 'electron'
-import type { Settings } from '@shared/settings'
-
-const COLLAPSED_SIZE = 56
+import type { Language, Settings } from '@shared/settings'
+import { t } from '@shared/i18n'
 
 // 与播放器 webview 共享的会话分区：登录窗口登录后，播放器即处于登录态
 export const PLAYER_PARTITION = 'persist:player'
@@ -22,7 +21,6 @@ function loadRenderer(win: BrowserWindow, name: 'player' | 'settings'): void {
 export class WindowManager {
   private player: BrowserWindow | null = null
   private settingsWin: BrowserWindow | null = null
-  private collapsedFrom: Rectangle | null = null
   /** 拖拽/缩放变更窗口范围时回调（用于持久化），已在外部做防抖 */
   onBoundsChanged: ((b: Rectangle) => void) | null = null
 
@@ -37,7 +35,7 @@ export class WindowManager {
       transparent: true,
       resizable: true,
       alwaysOnTop: true,
-      skipTaskbar: true,
+      skipTaskbar: false,
       hasShadow: false,
       backgroundColor: '#00000000',
       minWidth: 160,
@@ -79,7 +77,7 @@ export class WindowManager {
     return win
   }
 
-  openSettings(): void {
+  openSettings(language: Language = 'zh'): void {
     if (this.settingsWin && !this.settingsWin.isDestroyed()) {
       this.settingsWin.focus()
       return
@@ -89,7 +87,7 @@ export class WindowManager {
       height: 730,
       minWidth: 420,
       minHeight: 480,
-      title: '设置 - 悬浮播放器',
+      title: t('settings.windowTitle', language),
       resizable: true,
       frame: false,
       backgroundColor: nativeTheme.shouldUseDarkColors ? '#15181f' : '#f4f5f8',
@@ -154,23 +152,10 @@ export class WindowManager {
     }
   }
 
-  /** 折叠成左上角小图标（视频在后台继续播） */
-  collapse(): void {
-    if (!this.player || this.player.isDestroyed() || this.collapsedFrom) return
-    this.collapsedFrom = this.player.getBounds()
-    this.setInteractive(true) // 折叠态需可点图标展开
-    this.player.setBounds({ x: 12, y: 12, width: COLLAPSED_SIZE, height: COLLAPSED_SIZE })
-  }
-
-  /** 从折叠态还原 */
-  expand(): void {
-    if (!this.player || this.player.isDestroyed() || !this.collapsedFrom) return
-    this.player.setBounds(this.collapsedFrom)
-    this.collapsedFrom = null
-  }
-
-  isCollapsed(): boolean {
-    return this.collapsedFrom != null
+  /** 标准最小化到任务栏 */
+  minimize(): void {
+    if (!this.player || this.player.isDestroyed()) return
+    this.player.minimize()
   }
 
   sendToPlayer(channel: string, payload?: unknown): void {

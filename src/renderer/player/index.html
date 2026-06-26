@@ -22,12 +22,23 @@
           <input type="checkbox" id="pure-chk" checked /><span>纯视频</span>
         </label>
         <label class="chk"><input type="checkbox" id="passthrough-chk" /><span>穿透</span></label>
-        <button id="min-btn" title="最小化到角标">—</button>
+        <div class="control-group">
+          <button id="volume-btn" class="icon-btn" title="音量">
+            <span class="icon">🔊</span>
+          </button>
+          <input id="volume-slider" class="horizontal-slider" type="range" min="0" max="100" value="80" />
+        </div>
+        <div class="control-group">
+          <button id="opacity-btn" class="icon-btn" title="透明度">
+            <span class="icon">◐</span>
+          </button>
+          <input id="opacity-slider" class="horizontal-slider" type="range" min="20" max="100" value="90" />
+        </div>
+        <button id="min-btn" title="最小化">—</button>
         <button id="settings-btn" title="设置">⚙</button>
         <button id="close-btn" title="关闭">×</button>
       </div>
     </div>
-    <div id="collapsed-icon" title="点击展开">▶</div>
     <script type="module" src="./main.ts"></script>
   </body>
 </html>

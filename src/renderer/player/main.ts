@@ -1,5 +1,6 @@
 import type { Settings } from '@shared/settings'
 import type { SourceStatus } from '@shared/ipc'
+import { t } from '@shared/i18n'
 import { DirectPlayer } from './direct-player'
 import { PagePlayer } from './page-player'
 import { VisibilityController, type Pausable } from './visibility-controller'
@@ -20,27 +21,31 @@ const passthroughChk = $<HTMLInputElement>('passthrough-chk')
 const minBtn = $<HTMLButtonElement>('min-btn')
 const settingsBtn = $<HTMLButtonElement>('settings-btn')
 const closeBtn = $<HTMLButtonElement>('close-btn')
-const collapsedIcon = $<HTMLDivElement>('collapsed-icon')
 const toolbar = $<HTMLDivElement>('toolbar')
-const content = $<HTMLDivElement>('content')
+const root = $<HTMLDivElement>('root')
+
+// 音量与透明度控制
+const volumeBtn = $<HTMLButtonElement>('volume-btn')
+const volumeSlider = $<HTMLInputElement>('volume-slider')
+const opacitySlider = $<HTMLInputElement>('opacity-slider')
 
 let settings: Settings
 let active: 'direct' | 'page' | null = null
 let currentUrl = ''
 let passthrough = false
 let hoveringToolbar = false
-let collapsed = false
 
 const setStatus = (status: SourceStatus, message?: string): void => {
   api.reportStatus(status, message)
+  const lang = settings?.language ?? 'zh'
   const text =
     message ??
     (status === 'detecting'
-      ? '检测中…'
+      ? t('status.detecting', lang)
       : status === 'no-video'
-        ? '未检测到画面'
+        ? t('status.noVideo', lang)
         : status === 'error'
-          ? '无法播放'
+          ? t('status.error', lang)
           : '')
   statusEl.textContent = text
   statusEl.style.display = text ? 'flex' : 'none'
@@ -48,7 +53,7 @@ const setStatus = (status: SourceStatus, message?: string): void => {
 
 const direct = new DirectPlayer(video, setStatus)
 const page = new PagePlayer(pageClip, api.webviewPreloadUrl, setStatus)
-const visibility = new VisibilityController(content)
+const visibility = new VisibilityController(root)
 
 function activeMedia(): Pausable | null {
   if (active === 'direct') return direct
@@ -59,14 +64,57 @@ function activeMedia(): Pausable | null {
 function applyAudio(): void {
   direct.applyAudio(settings.audio.muted, settings.audio.volume)
   page.applyAudio(settings.audio.muted, settings.audio.volume)
+  updateVolumeUI()
+}
+
+function updateVolumeUI(): void {
+  const percent = Math.round(settings.audio.volume * 100)
+  volumeSlider.value = percent.toString()
+  // 更新音量图标 + 标题（标题随语言切换）
+  const icon = volumeBtn.querySelector('.icon')!
+  const lang = settings.language
+  if (settings.audio.muted) {
+    icon.textContent = '🔇'
+    volumeBtn.title = t('btn.volumeUnmute', lang)
+  } else if (settings.audio.volume === 0) {
+    icon.textContent = '🔇'
+    volumeBtn.title = t('btn.volume', lang)
+  } else if (settings.audio.volume < 0.5) {
+    icon.textContent = '🔉'
+    volumeBtn.title = t('btn.volume', lang)
+  } else {
+    icon.textContent = '🔊'
+    volumeBtn.title = t('btn.volume', lang)
+  }
+}
+
+function applyI18n(): void {
+  const lang = settings.language
+  urlInput.placeholder = t('placeholder.url', lang)
+  playBtn.textContent = t('btn.play', lang)
+  playBtn.title = t('btn.play', lang)
+  loginBtn.textContent = t('btn.login', lang)
+  loginBtn.title = t('btn.login.title', lang)
+  minBtn.title = t('btn.minimize', lang)
+  settingsBtn.title = t('btn.settings', lang)
+  closeBtn.title = t('btn.close', lang)
+  const dragEl = document.getElementById('drag')
+  if (dragEl) dragEl.title = t('btn.drag', lang)
+  const pureLabel = pureWrap.querySelector('span')
+  if (pureLabel) pureLabel.textContent = t('chk.pureVideo', lang)
+  const passthroughLabel = passthroughChk.parentElement?.querySelector('span')
+  if (passthroughLabel) passthroughLabel.textContent = t('chk.passthrough', lang)
+  const opacityBtn = document.getElementById('opacity-btn')
+  if (opacityBtn) opacityBtn.title = t('btn.opacity', lang)
+}
+
+function updateOpacityUI(): void {
+  const percent = Math.round(settings.opacity * 100)
+  opacitySlider.value = percent.toString()
 }
 
 // 穿透：视频区域是否让点击落到下层应用；工具栏始终可点（悬停时恢复接收）
 function applyInteractivity(): void {
-  if (collapsed) {
-    api.setInteractive(true)
-    return
-  }
   api.setInteractive(!passthrough || hoveringToolbar)
 }
 
@@ -115,12 +163,6 @@ function deriveLoginUrl(raw: string): string {
   }
 }
 
-function setCollapsed(value: boolean): void {
-  collapsed = value
-  document.body.classList.toggle('collapsed', value)
-  applyInteractivity()
-}
-
 // 事件绑定
 playBtn.addEventListener('click', () => void loadUrl(urlInput.value))
 urlInput.addEventListener('keydown', (e) => {
@@ -133,13 +175,24 @@ pureChk.addEventListener('change', () => page.setPureVideo(pureChk.checked))
 passthroughChk.addEventListener('change', () => {
   void api.patchSettings({ passthrough: passthroughChk.checked })
 })
-minBtn.addEventListener('click', () => {
-  setCollapsed(true)
-  api.collapse()
+
+// 音量控制：点击按钮切换静音，拖动滑块调整音量
+volumeBtn.addEventListener('click', () => {
+  void api.patchSettings({ audio: { muted: !settings.audio.muted, volume: settings.audio.volume } })
 })
-collapsedIcon.addEventListener('click', () => {
-  api.expand()
-  setCollapsed(false)
+volumeSlider.addEventListener('input', () => {
+  const volume = parseInt(volumeSlider.value, 10) / 100
+  void api.patchSettings({ audio: { muted: false, volume } })
+})
+
+// 透明度控制：拖动滑块调整
+opacitySlider.addEventListener('input', () => {
+  const opacity = parseInt(opacitySlider.value, 10) / 100
+  void api.patchSettings({ opacity })
+})
+
+minBtn.addEventListener('click', () => {
+  api.minimize()
 })
 settingsBtn.addEventListener('click', () => api.openSettings())
 closeBtn.addEventListener('click', () => api.quit())
@@ -159,6 +212,13 @@ api.onLoginDone(() => {
 })
 api.onVisibility((p) => {
   visibility.apply(p.hidden, p.transition, settings.mouseHide.keepPlayingWhenHidden, activeMedia())
+  // 同步设置整窗 OS 级不透明度，确保鼠标隐藏期间真正不可见（消除透明窗的细微残留）。
+  // 这是临时调整，不会写入 settings；恢复时回到用户配置的 opacity。
+  if (p.hidden) {
+    api.setWindowOpacity(0)
+  } else {
+    api.setWindowOpacity(settings.opacity)
+  }
 })
 api.onToggleMute(() => {
   void api.patchSettings({ audio: { muted: !settings.audio.muted, volume: settings.audio.volume } })
@@ -168,7 +228,9 @@ api.onSettingsChanged((s) => {
   passthrough = s.passthrough
   passthroughChk.checked = s.passthrough
   applyAudio()
+  updateOpacityUI()
   applyInteractivity()
+  applyI18n()
 })
 
 async function init(): Promise<void> {
@@ -176,7 +238,9 @@ async function init(): Promise<void> {
   passthrough = settings.passthrough
   passthroughChk.checked = settings.passthrough
   applyAudio()
+  updateOpacityUI()
   applyInteractivity()
+  applyI18n()
   // 默认不带 URL、不自动播放，输入框留空，等待用户输入
   setStatus('idle')
 }
