@@ -1,6 +1,6 @@
 {
   "name": "floating-stream-player",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Windows 桌面悬浮视频/直播播放器：透明置顶、跨应用悬浮、纯视频提取、鼠标自动隐藏。A floating always-on-top desktop video/live player for Windows.",
   "main": "./out/main/index.js",
   "author": "HuXing",
