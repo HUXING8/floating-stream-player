@@ -20,12 +20,11 @@ livestream while you work. Highly configurable.
 - **Direct streams & pages** — direct media (`.m3u8` / `.flv` / `.mp4`) plays natively; platform pages are loaded in an embedded browser and the video is extracted.
 - **Transparent & always-on-top** — frameless, floats above any desktop app, opacity adjustable 20%–100%.
 - **Click-through** — when enabled, clicks on the video area pass through to the app below; the toolbar stays clickable.
-- **Auto-hide on mouse move** — fades out while the mouse is active and reappears when it stops; three modes.
-- **Minimize to corner** — collapse to a small icon in the top-left corner (video keeps playing in the background); click the icon to expand.
+- **Auto-hide on mouse move** — fades out while the mouse is active and reappears when it stops; the entire window (including the toolbar) becomes fully invisible; three modes.
 - **Login support** — a standalone login window shares the player's session, so you log in once to watch content that requires it.
 - **Global shortcuts** — hide/show, toggle click-through, mute; all customizable.
-- **Themes** — light / dark / follow system.
-- **Native controls** — seek bar, play/pause, volume; skippable ads are auto-skipped.
+- **Themes & language** — light / dark / follow system; live switch between Chinese and English.
+- **Native controls** — seek bar, play/pause, volume. Ads are not auto-skipped, but you can drag the progress bar past them.
 
 ---
 
@@ -82,8 +81,8 @@ npm run dist         # produce Windows installers in release/
 2. **Login** — for content that requires it, click **Login** to open a normal-sized browser window, sign in, and close it; the player reloads in the logged-in state.
 3. **Quality / site features** — uncheck **Pure video** to show the full page and use the site's own quality menu, ad-skip, etc.; check it again to return to pure video.
 4. **Click-through** — check **Passthrough** so clicks fall to the app below; hovering the toolbar keeps it clickable.
-5. **Minimize** — click **—** to collapse to a corner icon; click the icon to expand.
-6. **Settings** (⚙) — theme, opacity, volume, mouse auto-hide, shortcuts.
+5. **Minimize** — click **—** to minimize to the Windows taskbar; click the taskbar icon to restore.
+6. **Settings** (⚙) — theme, language, opacity, volume, mouse auto-hide, shortcuts.
 
 ---
 
@@ -96,29 +95,6 @@ npm run dist         # produce Windows installers in release/
 | Toggle mute | `Ctrl+Alt+S` |
 
 All customizable in Settings.
-
----
-
-## 🛠️ Development
-
-```bash
-npm run dev          # start (electron-vite dev mode)
-npm run typecheck    # TypeScript type check
-npm run build        # build to out/
-npm run dist         # package Windows installers with electron-builder
-```
-
-Stack: Electron · TypeScript · electron-vite · hls.js · mpegts.js · electron-store.
-
-```
-src/
-  shared/      Settings schema & IPC contracts (single source of truth, shared by main/renderer)
-  main/        Main process: windows, settings store, global shortcuts, cursor watcher, login window
-  preload/     contextBridge-exposed APIs
-  renderer/
-    player/    Floating window: direct/page playback, video extraction, visibility control, toolbar
-    settings/  Settings window
-```
 
 ---
 
