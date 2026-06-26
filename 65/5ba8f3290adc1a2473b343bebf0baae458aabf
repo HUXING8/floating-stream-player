@@ -1,0 +1,23 @@
+package.json
+  d2bd574e5d904f3e 3
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "655ba8f3290adc1a2473b343bebf0baae458aabf",
+  "prompts": {
+    "d2bd574e5d904f3e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ad8a3cd6-44a3-411b-8137-adcef53b31b7",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "HuXing",
+      "messages": [],
+      "total_additions": 1,
+      "total_deletions": 1,
+      "accepted_lines": 62,
+      "overriden_lines": 0
+    }
+  }
+}
